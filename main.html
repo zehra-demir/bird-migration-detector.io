@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website with User Uploads</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: url('your-background-image.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: white;
+        }
+        header {
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 10px;
+            text-align: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+        header nav {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        header nav a {
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+        }
+        header nav a:hover {
+            text-decoration: underline;
+        }
+        .container {
+            margin-top: 100px; /* Adjust to account for the fixed header */
+            text-align: center;
+            padding: 20px;
+        }
+        #about {
+            margin: 50px 0;
+        }
+        .upload-section {
+            margin: 50px 0;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 20px;
+            border-radius: 10px;
+            display: inline-block;
+        }
+        .upload-section input {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="#about">About</a>
+            <a href="#upload">Upload</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <section id="about">
+            <h1>About This Website</h1>
+            <p>Welcome to my website! Feel free to explore and upload your images.</p>
+        </section>
+
+        <section id="upload" class="upload-section">
+            <h2>Upload Your Images</h2>
+            <form id="uploadForm">
+                <input type="file" id="fileInput" accept="image/*">
+                <button type="submit">Upload</button>
+            </form>
+            <div id="preview"></div>
+        </section>
+    </div>
+
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const fileInput = document.getElementById('fileInput');
+            const preview = document.getElementById('preview');
+
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.style.maxWidth = '100%';
+                    img.style.marginTop = '20px';
+                    preview.innerHTML = ''; // Clear previous images
+                    preview.appendChild(img);
+                };
+                reader.readAsDataURL(file);
+            } else {
+                alert('Please select an image to upload!');
+            }
+        });
+    </script>
+</body>
+</html>
