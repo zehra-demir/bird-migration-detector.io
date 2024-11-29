@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
     <title>AIBIRDCLIC</title>
     <style>
         body {
@@ -41,66 +40,45 @@
             padding: 20px;
         }
         #about {
-            margin: 50px 0;
-        }
-        .upload-section {
-            margin: 50px 0;
-            background: rgba(0, 0, 0, 0.6);
+            margin: 50px auto;
+            max-width: 600px; /* Limit width for better readability */
+            background: rgba(0, 0, 0, 0.6); /* Add semi-transparent background */
             padding: 20px;
             border-radius: 10px;
-            display: inline-block;
+            text-align: justify; /* Justify text for a clean look */
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
         }
-        .upload-section input {
-            margin-top: 10px;
+        #about h1 {
+            margin-bottom: 20px;
+            text-align: center; /* Center-align the title */
+        }
+        #about p {
+            line-height: 1.6; /* Add line spacing for readability */
+        }
+        #about .highlight {
+            font-weight: bold;
+            font-size: 1.1em; /* Slightly larger font size */
+            color: #ffcc00; /* Highlight color (gold) */
         }
     </style>
 </head>
 <body>
     <header>
         <nav>
-            <a href="#about">About</a>
-            <a href="#upload">Upload</a>
+            <a href="#about">Hakkımızda</a>
+            <a href="upload.html">Fotoğraf Yükle</a>
         </nav>
     </header>
 
     <div class="container">
         <section id="about">
-            <h1>About This Website</h1>
-            <p>Welcome to my website! Feel free to explore and upload your images.</p>
-        </section>
-
-        <section id="upload" class="upload-section">
-            <h2>Upload Your Images</h2>
-            <form id="uploadForm">
-                <input type="file" id="fileInput" accept="image/*">
-                <button type="submit">Upload</button>
-            </form>
-            <div id="preview"></div>
+            <h1>Hakkımızda</h1>
+            <p>
+                Bu websitesi İstanbul Teknik Üniversitesi Yapay Zeka ve Veri Mühendisliği son sınıf öğrencisinin 
+                "Yapay Zeka ile Göçmen Kuş Sürülerini Sayma ve Türlerini Tanıma" bitirme projesi için kurulmuştur. <br> <br>
+                <span class="highlight">Siz de projeye destek için İstanbul ve civarında çektiğiniz kuş sürüsü fotoğraflarını yükleyip, türünü belirtebilirsiniz!</span>
+            </p>
         </section>
     </div>
-
-    <script>
-        document.getElementById('uploadForm').addEventListener('submit', function(event) {
-            event.preventDefault();
-            const fileInput = document.getElementById('fileInput');
-            const preview = document.getElementById('preview');
-
-            if (fileInput.files.length > 0) {
-                const file = fileInput.files[0];
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const img = document.createElement('img');
-                    img.src = e.target.result;
-                    img.style.maxWidth = '100%';
-                    img.style.marginTop = '20px';
-                    preview.innerHTML = ''; // Clear previous images
-                    preview.appendChild(img);
-                };
-                reader.readAsDataURL(file);
-            } else {
-                alert('Please select an image to upload!');
-            }
-        });
-    </script>
 </body>
 </html>

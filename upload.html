@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fotoğraf Yükle - AIBIRDCLIC</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: url('bg.png') no-repeat center center fixed;
+            background-size: cover;
+            color: white;
+        }
+        header {
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 10px;
+            text-align: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+        header nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 18px;
+        }
+        header nav a:hover {
+            text-decoration: underline;
+        }
+        .container {
+            margin-top: 100px;
+            text-align: center;
+            padding: 20px;
+        }
+        .upload-section {
+            margin: 50px 0;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 20px;
+            border-radius: 10px;
+            display: inline-block;
+            text-align: center;
+        }
+        .upload-section input, .upload-section button {
+            margin-top: 10px;
+            padding: 10px;
+            font-size: 16px;
+            display: block;
+            width: 100%;
+            max-width: 300px;
+            background-color: #444;
+            color: white;
+            border: 1px solid #555;
+            border-radius: 5px;
+        }
+        .upload-section button {
+            cursor: pointer;
+            background-color: #28a745;
+            border: none;
+            max-width: 322px;
+        }
+        .upload-section button:hover {
+            background-color: #218838;
+        }
+        #status {
+            margin-top: 20px;
+            font-size: 16px;
+        }
+        #status p {
+            margin: 0;
+        }
+    </style>
+    <script src="https://apis.google.com/js/api.js"></script>
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="index.html">Ana Sayfa</a>
+            <a href="upload.html">Fotoğraf Yükle</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <section class="upload-section">
+            <h2>Fotoğraf Yükleme</h2>
+            <form id="uploadForm">
+                <input type="file" id="fileInput" accept="image/*" multiple>
+                <button type="submit">Yükle</button>
+            </form>
+            <div id="status"></div>
+        </section>
+    </div>
+
+    <script>
+        const CLIENT_ID = "GOOGLE_CLIENT_ID";
+        const API_KEY = "GOOGLE_API_KEY";
+        const SCOPES = "https://www.googleapis.com/auth/drive.file";
+
+        let accessToken = "";
+
+        // Load the API client and auth2 library
+        function loadClient() {
+            gapi.client.setApiKey(API_KEY);
+            return gapi.client.load("https://www.googleapis.com/discovery/v1/apis/drive/v3/rest")
+                .then(function() {
+                    console.log("GAPI client loaded for API");
+                }, function(error) {
+                    console.error("Error loading GAPI client for API", error);
+                });
+        }
+
+        // Sign in the user
+        function handleAuthClick(event) {
+            gapi.auth2.getAuthInstance().signIn().then(function() {
+                accessToken = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().access_token;
+                document.getElementById("status").innerHTML = "Authenticated!";
+            });
+        }
+
+        // Upload file to Google Drive
+        function uploadFileToDrive(file) {
+            const formData = new FormData();
+            formData.append("file", file);
+
+            const request = gapi.client.drive.files.create({
+                resource: {
+                    name: file.name,
+                    mimeType: file.type
+                },
+                media: {
+                    mimeType: file.type,
+                    body: formData
+                }
+            });
+
+            request.execute(function(response) {
+                if (response.id) {
+                    document.getElementById("status").innerHTML = "Upload successful!";
+                } else {
+                    document.getElementById("status").innerHTML = "Upload failed!";
+                }
+            });
+        }
+
+        document.getElementById('uploadForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const fileInput = document.getElementById('fileInput');
+            const status = document.getElementById('status');
+
+            if (fileInput.files.length === 0) {
+                status.innerHTML = `<p style="color: red;">Lütfen bir dosya seçin!</p>`;
+                return;
+            }
+
+            const files = fileInput.files;
+
+            // Check if user is authenticated
+            if (!accessToken) {
+                status.innerHTML = "<p style='color: red;'>Google Drive authentication is required. Please sign in first.</p>";
+                return;
+            }
+
+            for (let file of files) {
+                uploadFileToDrive(file);
+            }
+        });
+
+        function init() {
+            gapi.load("client:auth2", function() {
+                gapi.auth2.init({
+                    client_id: CLIENT_ID
+                }).then(function() {
+                    const authButton = document.createElement('button');
+                    authButton.textContent = "Sign in with Google";
+                    authButton.onclick = handleAuthClick;
+                    document.body.appendChild(authButton);
+                });
+            });
+        }
+
+        // Initialize Google API Client
+        init();
+    </script>
+</body>
+</html>
